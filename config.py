@@ -1,0 +1,5 @@
+MYSQL_HOST = 'lemonl1me.mysql.pythonanywhere-services.com'
+MYSQL_USER = 'lemonl1me'
+MYSQL_PASSWORD = 'кщщекщще'
+MYSQL_DB = 'lemonl1me$iotproj'
+FCM_KEY = 'AAAAXl9OE3A:APA91bGiT83Wx_WH4ihXtGqJytzKABejFGLngv2LCfhR54yCxDB9oVLzEQlozw7HO-GnMnUw6WoDCPzOmhxT7t560YTJM7QHeXCIfEHtSVFmPZaEd0D3wkSgGsCC_cqsWVqt6ha3Ug1J'

@@ -5,23 +5,25 @@ import smtplib
 import json
 from pyfcm import FCMNotification
 import pytest
+from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, FCM_KEY
 
 app = Flask(__name__)
 
 app.secret_key = 'my secret key'
 
-app.config['MYSQL_HOST'] = 'lemonl1me.mysql.pythonanywhere-services.com'
-app.config['MYSQL_USER'] = 'lemonl1me'
-app.config['MYSQL_PASSWORD'] = 'кщщекщще'
-app.config['MYSQL_DB'] = 'lemonl1me$iotproj'
-app.config[
-    'FCM_KEY'] = 'AAAAXl9OE3A:APA91bGiT83Wx_WH4ihXtGqJytzKABejFGLngv2LCfhR54yCxDB9oVLzEQlozw7HO-GnMnUw6WoDCPzOmhxT7t560YTJM7QHeXCIfEHtSVFmPZaEd0D3wkSgGsCC_cqsWVqt6ha3Ug1J'
+app.config['MYSQL_HOST'] = MYSQL_HOST
+app.config['MYSQL_USER'] = MYSQL_USER
+app.config['MYSQL_PASSWORD'] = MYSQL_PASSWORD
+app.config['MYSQL_DB'] = MYSQL_DB
+app.config['FCM_KEY'] = FCM_KEY
 
 mysql = MySQL(app)
 
 
 def dictfetchall(cursor):
-    "Return all rows from a cursor as a dict"
+    """
+    Return all rows from a cursor as a dict
+    """
     columns = [col[0] for col in cursor.description]
     return [
         dict(zip(columns, row))
