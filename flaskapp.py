@@ -4,7 +4,6 @@ import MySQLdb.cursors
 import smtplib
 import json
 from pyfcm import FCMNotification
-import pytest
 from config import MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB, FCM_KEY
 
 app = Flask(__name__)
@@ -33,6 +32,9 @@ def dictfetchall(cursor):
 
 @app.route('/neighbours', methods=['GET'])
 def get_neighbours():
+    """
+    Получение списка всех пользователей
+    """
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT device_id, email, is_in_home FROM accounts")
     rows = cursor.fetchall()
@@ -43,6 +45,9 @@ def get_neighbours():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Регистрация с помощью почты
+    """
     if not request.json:
         abort(404)
     if request.method == 'POST':
@@ -77,6 +82,9 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Авторизация
+    """
     if request.method == 'POST':
         jdata = request.get_json()
         email = str(jdata['email'])
@@ -101,6 +109,9 @@ def login():
 
 @app.route('/neighbours/<int:device_id>/<string:email>', methods=['GET'])
 def get_room(device_id, email):
+    """
+    Получение всех соседей пользователя по id девайса
+    """
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT device_id, email, is_in_home FROM accounts WHERE email != % s", (email,))
     rows = cursor.fetchall()
@@ -113,6 +124,9 @@ def get_room(device_id, email):
 
 @app.route('/update/<string:email_update>', methods=['PUT'])
 def update_account(email_update):
+    """
+    Обновление данных аккаунта по почте
+    """
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     jdata = request.get_json()
     device_id = int(jdata['id'])
@@ -137,6 +151,9 @@ def update_account(email_update):
 
 @app.route('/add', methods=['POST'])
 def add_neighbour():
+    """
+    Добавление нового соседа
+    """
     jdata = request.get_json()
     user_email = str(jdata['user_email'])
     new_email = str(jdata['new_email'])
@@ -159,6 +176,9 @@ def logout():
 
 @app.route('/trigger/<int:device_id>')
 def smt(device_id):
+    """
+    Отправка уведомления
+    """
     result = send_fcm(device_id)
     if result == 1:
         response = Response(status=200)
@@ -168,7 +188,7 @@ def smt(device_id):
         return response
 
 
-def send_fcm(device_id, title=None, body=None, data_message=None):
+def send_fcm(device_id, data_message=None):
     push_service = FCMNotification(api_key=app.config['FCM_KEY'])
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT tokens FROM accounts WHERE device_id = % s ', (device_id,))
@@ -196,7 +216,7 @@ def send_fcm(device_id, title=None, body=None, data_message=None):
                                                        message_data=data)
             print(result, flush=True)
             return 1
-    except ValueError as e:
+    except ValueError:
         return 0
 
 
